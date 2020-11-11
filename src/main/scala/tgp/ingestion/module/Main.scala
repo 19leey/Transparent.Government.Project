@@ -1,5 +1,7 @@
 package tgp.ingestion.module
 
+import java.time.LocalDateTime
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
@@ -27,6 +29,7 @@ object Main extends App {
     val responseEntity: Future[String] =
       responseFuture.flatMap(_.entity.toStrict(5 seconds).map(_.data.decodeString("UTF-8")))
 
+    println(s"[${LocalDateTime.now}] Getting CIDs for $state")
     val buffer = responseEntity.flatMap(response => extractCID(response))
     buffer
   }
@@ -34,9 +37,10 @@ object Main extends App {
   def extractCID(response: String): Future[List[String]] = {
     // @TODO save the responses to somewhere - mongoDB????
     val data = Json.parse(response)
-    val payload = data \\ "cid"
+    val cidPayload = data \\ "cid"
+    val dataPaylaod = data \\ "legislator"
     val buffer = ListBuffer[String]()
-    payload.foreach(cid => buffer += cid.toString())
+    cidPayload.foreach(cid => buffer += cid.toString())
     Future(buffer.toList)
   }
 

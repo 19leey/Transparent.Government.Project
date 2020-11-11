@@ -1,5 +1,7 @@
 package tgp.ingestion.module
 
+import java.time.LocalDateTime
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
@@ -111,6 +113,7 @@ object Application extends App {
       // TODO MAYBE
       // val url = s"http://www.opensecrets.org/api/?method=candIndByInd&apikey=$apiKey&cid=$cid&output=json"
 
+      println(s"[${LocalDateTime.now}] Generating links for $cid")
       List(summary, personal, contributors, industries, sectors)
     }
 
