@@ -9,6 +9,7 @@ ThisBuild / useCoursier := false
 val akkaVersion = "2.6.10"
 val akkaHttpVersion = "10.2.1"
 val playVersion = "2.9.1"
+val mongoDriverVersion = "2.9.0"
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
@@ -16,6 +17,5 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
   "com.typesafe.play" %% "play-json" % playVersion,
-  "com.lightbend.akka" %% "akka-stream-alpakka-mongodb" % "2.0.2",
-  "org.mongodb" % "mongodb-driver-reactivestreams" % "1.12.0"
+  "org.mongodb.scala" %% "mongo-scala-driver" % mongoDriverVersion
 )
