@@ -16,9 +16,7 @@ case class MongoPayload(collection: MongoCollection[Document], payload: Seq[JsVa
 class MongoWorker extends Actor {
   override def receive: Receive = {
     case MongoPayload(collection, payload) => {
-
-      payload.foreach {
-        x =>
+      payload.map {x =>
         val document: Document = Document(x.toString())
         val insertObservable: Observable[Completed] = collection.insertOne(document)
 
@@ -30,13 +28,6 @@ class MongoWorker extends Actor {
           override def onComplete(): Unit = println("onComplete")
         })
       }
-
-
-//      payload.foreach{
-//        x => collection.insertOne(Document(x.toString))
-//      }
-
-      //println(payload)
     }
     case _       => println("huh?")
   }
@@ -125,32 +116,6 @@ object Mongo extends App {
                     |  }
                     |}""".stripMargin
 
-//    val payload = """{
-//                    |        "@attributes": {
-//                    |          "cid": "N00038414",
-//                    |          "firstlast": "Lisa Blunt Rochester",
-//                    |          "lastname": "Rochester",
-//                    |          "party": "D",
-//                    |          "office": "DE01",
-//                    |          "gender": "F",
-//                    |          "first_elected": "2016",
-//                    |          "exit_code": "0",
-//                    |          "comments": "",
-//                    |          "phone": "202-225-4165",
-//                    |          "fax": "",
-//                    |          "website": "https://bluntrochester.house.gov",
-//                    |          "webform": "",
-//                    |          "congress_office": "1123 Longworth House Office Building",
-//                    |          "bioguide_id": "B001303",
-//                    |          "votesmart_id": "",
-//                    |          "feccandid": "",
-//                    |          "twitter_id": "RepBRochester",
-//                    |          "youtube_url": "",
-//                    |          "facebook_id": "Rep.BluntRochester",
-//                    |          "birthdate": "1962-02-10"
-//                    |        }
-//                    |      }""".stripMargin
-
   val data = Json.parse(payload)
   val legislators = data \\ "@attributes"
 
@@ -159,24 +124,13 @@ object Mongo extends App {
   val database: MongoDatabase = client.getDatabase("tgp")
   val collection: MongoCollection[Document] = database.getCollection("test")
 
-  legislators.map {x =>
-    val document: Document = Document(x.toString())
-    val insertObservable: Observable[Completed] = collection.insertOne(document)
-
-    insertObservable.subscribe(new Observer[Completed] {
-      override def onNext(result: Completed): Unit = println(s"onNext: $result")
-
-      override def onError(e: Throwable): Unit = println(s"onError: $e")
-
-      override def onComplete(): Unit = println("onComplete")
-    })
-  }
-
+//  val documents = legislators.map(x => Document(x.toString()))
+//  val insertObservable = collection.insertMany(documents)
 
   val system = ActorSystem("MongoLoader")
 
   val mongoWorker = system.actorOf(Props[MongoWorker])
-  //mongoWorker ! MongoPayload(collection, legislators)
+  mongoWorker ! MongoPayload(collection, legislators)
   //mongoWorker ! "buenos dias"
 }
 

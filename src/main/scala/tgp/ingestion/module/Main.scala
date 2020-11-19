@@ -38,7 +38,7 @@ object Main extends App {
     // @TODO save the responses to somewhere - mongoDB????
     val data = Json.parse(response)
     val cidPayload = data \\ "cid"
-    val dataPaylaod = data \\ "legislator"
+    val dataPaylaod = data \\ "@attributes"
     val buffer = ListBuffer[String]()
     cidPayload.foreach(cid => buffer += cid.toString())
     Future(buffer.toList)
