@@ -3,22 +3,13 @@ package tgp.ingestion.module
 import java.time.LocalDateTime
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
-import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Flow, Sink, Source}
-
-import scala.concurrent.Future
-import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
-import scala.util.{Failure, Success}
-import play.api.libs.json.{JsValue, Json}
+
 
 import scala.collection.mutable.ListBuffer
 
 object Application extends App {
   implicit val system = ActorSystem()
-  implicit val executionContext = system.dispatcher
 
 
   val cids = List("N00007999", "N00035774", "N00026050", "N00035380", "N00030768", "N00024759",
@@ -101,26 +92,7 @@ object Application extends App {
     "N00039330", "N00004367", "N00032546", "N00031681", "N00033814", "N00041542", "N00032838",
     "N00009771", "N00035504", "N00006236", "N00006249")
 
-
-    def makeURLs(cid: String): List[String] = {
-      val apiKey = "a823a42f77a789a884db54ef9669e48d"
-
-      val summary = s"http://www.opensecrets.org/api/?method=candSummary&apikey=$apiKey&cid=$cid&output=json"
-      val personal = s"http://www.opensecrets.org/api/?method=memPFDprofile&apikey=$apiKey&cid=$cid&output=json"
-      val contributors = s"http://www.opensecrets.org/api/?method=candContrib&apikey=$apiKey&cid=$cid&output=json"
-      val industries = s"http://www.opensecrets.org/api/?method=candIndustry&apikey=$apiKey&cid=$cid&output=json"
-      val sectors = s"http://www.opensecrets.org/api/?method=candSector&apikey=$apiKey&cid=$cid&output=json"
-      // TODO MAYBE
-      // val url = s"http://www.opensecrets.org/api/?method=candIndByInd&apikey=$apiKey&cid=$cid&output=json"
-
-      println(s"[${LocalDateTime.now}] Generating links for $cid")
-      List(summary, personal, contributors, industries, sectors)
-    }
-
-    val urls = ListBuffer[String]()
-    cids.foreach(cid => makeURLs(cid).foreach(urls += _))
-
-    print(urls.size)
+    print(cids.size)
 
 
 }
