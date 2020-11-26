@@ -2,9 +2,9 @@ package tgp.ingestion.module
 
 import akka.actor.{ActorSystem, Props}
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase}
-import tgp.ingestion.module.Engine.ingestStates
+import tgp.ingestion.module.Engine.ingestCIDData
+import tgp.ingestion.module.Processor.collectCIDUrls
 
-import scala.collection.mutable.ListBuffer
 
 object Main extends App {
   implicit val system = ActorSystem()
@@ -14,7 +14,7 @@ object Main extends App {
 
   val client: MongoClient = MongoClient()
   val database: MongoDatabase = client.getDatabase("tgp")
-  val collection: MongoCollection[Document] = database.getCollection("test")
+  val collection: MongoCollection[Document] = database.getCollection("testcid")
 
   val states = List("AK", "AL", "AR", "AS", "AZ", "CA", "CO",
     "CT", "DC", "DE", "FL", "GA", "GU", "HI", "IA", "ID",
@@ -24,12 +24,15 @@ object Main extends App {
     "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VI", "VT",
     "WA", "WI", "WV", "WY")
 
-  var cids = new ListBuffer[String]()
+//  var cids = new ListBuffer[String]()
 
-  val graph = ingestStates(states)
-  graph.onComplete(done => println("State ingestion complete"))
+//  val graph = ingestStates(states)
+//  graph.onComplete(done => println("State ingestion complete"))
 
+  val cids = List("N00007999")
 
+  val urls = collectCIDUrls(cids)
+  val graph = ingestCIDData(urls)
+  graph.onComplete(done => println("CID ingestion complete"))
 
-  // cids - will be new source
 }
