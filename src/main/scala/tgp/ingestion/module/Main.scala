@@ -2,8 +2,11 @@ package tgp.ingestion.module
 
 import akka.actor.{ActorSystem, Props}
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase}
+import play.api.libs.json.JsObject
 import tgp.ingestion.module.Engine.ingestCIDData
-import tgp.ingestion.module.Processor.collectCIDUrls
+import tgp.ingestion.module.Processor.{collectCIDUrls, extractData}
+
+import scala.collection.mutable.ListBuffer
 
 
 object Main extends App {
@@ -29,7 +32,9 @@ object Main extends App {
 //  val graph = ingestStates(states)
 //  graph.onComplete(done => println("State ingestion complete"))
 
-  val cids = List("N00007999")
+  val cids = List("N00007999", "N00035774", "N00026050", "N00035380", "N00030768", "N00024759")
+
+  var data = new ListBuffer[JsObject]()
 
   val urls = collectCIDUrls(cids)
   val graph = ingestCIDData(urls)
